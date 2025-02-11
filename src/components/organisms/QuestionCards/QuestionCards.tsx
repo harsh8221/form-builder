@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import QuestionCard from '@components/molecules/QuestionCard';
 import { Button } from '@mui/material';
+
+import QuestionCard from '@components/molecules/QuestionCard';
+import NoQuestionView from '@components/molecules/NoQuestionView';
+
 import { QuestionTypes } from '@constants/QuestionTypes';
 
 import { Question } from '@interface/Question';
 
+import { validateQuestion } from './questionCards.helpers';
 import style from './style.module.css';
 
 interface QuestionCardsProps {
@@ -13,7 +17,9 @@ interface QuestionCardsProps {
   onUpdate: (questions: Question[]) => void;
 }
 
-const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) => {
+const QuestionCards: React.FC<QuestionCardsProps> = (
+  props: QuestionCardsProps
+) => {
   const { data, onUpdate } = props;
 
   const [questions, setQuestions] = useState<Question[]>(data);
@@ -29,20 +35,21 @@ const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) 
     setQuestions((prevState) => {
       setExpanded(prevState.length);
       const newQuestions = [...prevState, newQuestion];
-      onUpdate(newQuestions);
       return newQuestions;
     });
   };
 
   const handleSetExpanded = (index: number) => {
-    setExpanded((prevState:number) => (prevState === index ? -1 : index));
-  }
+    setExpanded((prevState: number) => (prevState === index ? -1 : index));
+  };
 
   const handleUpdateQuestion = (index: number, question: Question) => {
     setQuestions((prevState: Question[]) => {
       const newQuestions = [...prevState];
       newQuestions[index] = question;
-      onUpdate(newQuestions);
+      if (validateQuestion(question)) {
+        onUpdate(newQuestions);
+      }
       return newQuestions;
     });
   };
@@ -52,7 +59,7 @@ const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) 
       const newQuestions = [...prevState];
       newQuestions.splice(index, 1);
 
-    onUpdate(newQuestions);
+      onUpdate(newQuestions);
       return newQuestions;
     });
   };
@@ -74,6 +81,7 @@ const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) 
           onDelete={handleDeleteQuestion}
         />
       ))}
+      {!questions.length && <NoQuestionView />}
       <div className={style.buttonContainer}>
         <Button variant='contained' color='primary' onClick={handleAddQuestion}>
           Add Question
@@ -81,6 +89,6 @@ const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) 
       </div>
     </div>
   );
-}
+};
 
 export default QuestionCards;

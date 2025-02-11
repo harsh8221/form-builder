@@ -10,7 +10,6 @@ import { debounce } from '@utils/debounce';
 import { getFormQuestions, setFormQuestions } from './formBuilder.helper';
 
 import style from './style.module.css';
-import NoQuestionView from '@components/molecules/NoQuestionView';
 
 const setFormQuestionsDebounced = debounce(setFormQuestions, 500);
 
@@ -31,7 +30,6 @@ const FormBuilder: React.FC = () => {
       <Typography className={style.titleContainer} variant='h4'>
         Form Builder
       </Typography>
-      {!questions.length && <NoQuestionView />}
       <QuestionCards data={questions} onUpdate={handleUpdateQuestion} />
     </div>
   );
