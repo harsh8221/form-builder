@@ -5,26 +5,36 @@ import { FormControlLabel, Switch } from '@mui/material';
 import style from './style.module.css';
 
 interface QuestionRequiredSwitchProps {
-  isRequired: boolean,
-  onChange: (field: string, value: boolean) => void,
+  toggled: boolean | undefined;
+  fieldKey: string;
+  label: string;
+  required?: boolean | undefined;
+  onChange: (field: string, value: boolean) => void;
 }
 
-const QuestionRequiredSwitch: React.FC<QuestionRequiredSwitchProps> = (props: QuestionRequiredSwitchProps) => {
-
-  const { isRequired, onChange } = props;
+const QuestionRequiredSwitch: React.FC<QuestionRequiredSwitchProps> = (
+  props: QuestionRequiredSwitchProps
+) => {
+  const {
+    toggled,
+    onChange,
+    fieldKey = 'isRequired',
+    label,
+    required = false,
+  } = props;
 
   const handleChange = () => {
-      onChange('isRequired', !isRequired);
-  }
+    onChange(fieldKey, !toggled);
+  };
 
   return (
     <FormControlLabel
       className={style.container}
-      required
-      control={<Switch checked={isRequired} onChange={handleChange} />}
-      label='Required'
+      required={required}
+      control={<Switch checked={toggled} onChange={handleChange} />}
+      label={label}
     />
   );
-}
+};
 
 export default QuestionRequiredSwitch

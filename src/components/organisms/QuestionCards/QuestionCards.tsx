@@ -22,7 +22,7 @@ const QuestionCards: React.FC<QuestionCardsProps> = (props: QuestionCardsProps) 
   const handleAddQuestion = () => {
     const newQuestion: Question = {
       questionTitle: '',
-      questionType: QuestionTypes.TEXT,
+      questionType: QuestionTypes.NONE,
       helperText: '',
       isRequired: false,
     };

@@ -1,45 +1,62 @@
 import React from 'react';
 
-import { TextField } from '@mui/material';
-
-import { QuestionTypes, QuestionTypeLabels } from '@constants/QuestionTypes';
+import { TextField, MenuItem } from '@mui/material';
 
 import style from './style.module.css';
 
 interface QuestionTypeTextFieldProps {
-  questionType: QuestionTypes,
-  onChange: (field: string, value: QuestionTypes ) => void,
+  error: boolean;
+  questionType: string;
+  onChange: (field: string, value: string) => void;
+  fieldKey: string;
+  options: {
+    [key: string]: string;
+  };
+  label?: string;
+  placeholder?: string;
+  helperText?: string;
 }
 
-const QuestionTypeTextField: React.FC<QuestionTypeTextFieldProps> = (props: QuestionTypeTextFieldProps) => {
-
-  const { questionType, onChange } = props
+const QuestionTypeTextField: React.FC<QuestionTypeTextFieldProps> = (
+  props: QuestionTypeTextFieldProps
+) => {
+  const {
+    questionType,
+    onChange,
+    error,
+    label = 'Question Type',
+    placeholder = 'Select a question type',
+    helperText = 'Question type is required',
+    options,
+    fieldKey = 'questionType',
+  } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChange('questionType', event.target.value as QuestionTypes)
-  }
+    onChange(fieldKey, event.target.value);
+  };
 
   return (
     <TextField
       select
       fullWidth
       required
+      error={error}
       variant='outlined'
-      label='Question Type'
-      placeholder='Select a question type'
+      label={label}
+      placeholder={placeholder}
       onChange={handleChange}
       value={questionType}
+      helperText={error ? helperText : ''}
       inputProps={{
         className: style.input,
-      }}
-    >
-      {Object.entries(QuestionTypeLabels).map(([key, value]) => (
-        <option className={style.option} key={key} value={key}>
+      }}>
+      {Object.entries(options).map(([key, value]) => (
+        <MenuItem key={key} value={key} className={style.option}>
           {value}
-        </option>
+        </MenuItem>
       ))}
     </TextField>
   );
-}
+};
 
 export default QuestionTypeTextField

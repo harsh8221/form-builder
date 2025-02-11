@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { ExpandMore, Delete as DeleteIcon } from '@mui/icons-material';
 
-import { QuestionTypes } from '@constants/QuestionTypes';
+import { QuestionTypes, QuestionTypeLabels } from '@constants/QuestionTypes';
 
 import QuestionTextField from '@components/atoms/QuestionTextField';
 import QuestionTypeTextField from '@components/atoms/QuestionTypeTextField';
@@ -19,6 +19,7 @@ import QuestionHelperTextField from '@components/atoms/QuestionHelperTextField';
 import { Question } from '@interface/Question';
 
 import style from './style.module.css';
+import QuestionNumberFields from '../QuestionNumberFields';
 
 interface QuestionCardProps {
   expanded: boolean;
@@ -29,7 +30,9 @@ interface QuestionCardProps {
   onDelete: (index: number) => void;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = (props: QuestionCardProps) => {
+const QuestionCard: React.FC<QuestionCardProps> = (
+  props: QuestionCardProps
+) => {
   const {
     expanded,
     question,
@@ -39,26 +42,48 @@ const QuestionCard: React.FC<QuestionCardProps> = (props: QuestionCardProps) => 
     onDelete,
   } = props;
 
-  const handleChanges = (field: string, value: string | number | boolean | QuestionTypes) => {
+  const [questionNameError, setQuestionNameError] = React.useState(false);
+  const [questionTypeError, setQuestionTypeError] = React.useState(false);
+
+  const handleChanges = (
+    field: string,
+    value: string | number | boolean | QuestionTypes
+  ) => {
+    console.log('Hello: ', field, value);
+
+    if (field === 'questionTitle') {
+      if (value === '') {
+        setQuestionNameError(true);
+      } else {
+        setQuestionNameError(false);
+      }
+    } else if (field === 'questionType') {
+      if (value === QuestionTypes.NONE) {
+        setQuestionTypeError(true);
+      } else {
+        setQuestionTypeError(false);
+      }
+    }
+
     onChange({
       ...question,
       [field]: value,
     });
-  }
+  };
 
   const handleDelete = () => {
     onDelete(questionNumber);
-  }
+  };
 
   const handleAccordionToggle = () => {
     toggleExpanded(questionNumber);
-  }
+  };
 
   return (
     <div>
       <Accordion expanded={expanded} onChange={handleAccordionToggle}>
         <AccordionSummary
-          classes={{ content: style.accordionSummary}}
+          classes={{ content: style.accordionSummary }}
           expandIcon={<ExpandMore />}>
           <Typography variant='h6'>
             Question {questionNumber + 1} {!expanded && ':'}{' '}
@@ -73,27 +98,51 @@ const QuestionCard: React.FC<QuestionCardProps> = (props: QuestionCardProps) => 
         <AccordionDetails
           style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <QuestionTextField
+            error={questionNameError}
             question={question.questionTitle}
             onChange={handleChanges}
           />
           <div className={style.questionTypeContainer}>
             <QuestionTypeTextField
+              error={questionTypeError}
               questionType={question.questionType}
               onChange={handleChanges}
+              options={QuestionTypeLabels}
+              fieldKey='questionType'
             />
             <QuestionRequiredSwitch
-              isRequired={question.isRequired}
+              fieldKey='isRequired'
+              toggled={question.isRequired}
               onChange={handleChanges}
+              label='Required'
             />
           </div>
           <QuestionHelperTextField
             helperText={question.helperText}
             onChange={handleChanges}
           />
+
+          {question.questionType === QuestionTypes.TEXT && (
+            <QuestionRequiredSwitch
+              fieldKey='isParagraph'
+              toggled={question.isParagraph}
+              onChange={handleChanges}
+              label='isParagraph'
+            />
+          )}
+
+          {question.questionType === QuestionTypes.NUMBER && (
+            <QuestionNumberFields
+              numberType={question.numberType}
+              numberMin={question.numberMin}
+              numberMax={question.numberMax}
+              onChange={handleChanges}
+            />
+          )}
         </AccordionDetails>
       </Accordion>
     </div>
   );
-}
+};
 
 export default QuestionCard
