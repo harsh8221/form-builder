@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid gray;
+  background-color: whitesmoke;
+}
+
+.inputroot {
+  margin-top: 0px;
+  /* margin-left: 12px; */
+}
